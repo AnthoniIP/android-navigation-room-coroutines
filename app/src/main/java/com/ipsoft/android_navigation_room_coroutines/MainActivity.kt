@@ -11,8 +11,8 @@ import com.ipsoft.android_navigation_room_coroutines.databinding.ActivityMainBin
 
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
 
+    private lateinit var binding: ActivityMainBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navController: NavController
 

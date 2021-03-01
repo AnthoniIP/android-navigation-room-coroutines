@@ -13,7 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.ipsoft.android_navigation_room_coroutines.R
 import com.ipsoft.android_navigation_room_coroutines.databinding.FragmentProfileBinding
