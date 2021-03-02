@@ -16,11 +16,12 @@ import androidx.activity.addCallback
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputLayout
 import com.ipsoft.android_navigation_room_coroutines.R
+import com.ipsoft.android_navigation_room_coroutines.data.db.AppDatabase
+import com.ipsoft.android_navigation_room_coroutines.data.repository.UserDbDataSource
 import com.ipsoft.android_navigation_room_coroutines.databinding.FragmentProfileDataBinding
 import com.ipsoft.android_navigation_room_coroutines.extensions.dismissError
 import com.ipsoft.android_navigation_room_coroutines.extensions.navigateWithAnimations
@@ -32,7 +33,14 @@ class ProfileDataFragment : Fragment() {
     private var _binding: FragmentProfileDataBinding? = null
     private val binding get() = _binding!!
 
-    private val registrationViewModel: RegistrationViewModel by activityViewModels()
+    private val registrationViewModel: RegistrationViewModel by activityViewModels(
+        factoryProducer = {
+            val database = AppDatabase.getDatabase(requireContext())
+            RegistrationViewModel.RegistrationViewModelFactory(
+                userRepository = UserDbDataSource(database.userDao())
+            )
+        }
+    )
 
     private val navController: NavController by lazy {
         findNavController()
@@ -55,6 +63,7 @@ class ProfileDataFragment : Fragment() {
         registerViewListeners()
         registerDeviceBackStackCallback()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -66,22 +75,24 @@ class ProfileDataFragment : Fragment() {
     )
 
     private fun listenToRegistrationStateEvent(validationFields: Map<String, TextInputLayout>) {
-        registrationViewModel.registrationStateEvent.observe(viewLifecycleOwner, { registrationState ->
-            when (registrationState) {
-                is RegistrationViewModel.RegistrationState.CollectCredentials -> {
-                    val name = binding.inputProfileDataName.text.toString()
-                    val directions = ProfileDataFragmentDirections
-                        .actionProfileDataFragmentToChooseCredentialsFragment(name)
+        registrationViewModel.registrationStateEvent.observe(
+            viewLifecycleOwner,
+            { registrationState ->
+                when (registrationState) {
+                    is RegistrationViewModel.RegistrationState.CollectCredentials -> {
+                        val name = binding.inputProfileDataName.text.toString()
+                        val directions = ProfileDataFragmentDirections
+                            .actionProfileDataFragmentToChooseCredentialsFragment(name)
 
-                    navController.navigateWithAnimations(directions)
-                }
-                is RegistrationViewModel.RegistrationState.InvalidProfileData -> {
-                    registrationState.fields.forEach { fieldError ->
-                        validationFields[fieldError.first]?.error = getString(fieldError.second)
+                        navController.navigateWithAnimations(directions)
+                    }
+                    is RegistrationViewModel.RegistrationState.InvalidProfileData -> {
+                        registrationState.fields.forEach { fieldError ->
+                            validationFields[fieldError.first]?.error = getString(fieldError.second)
+                        }
                     }
                 }
-            }
-        })
+            })
     }
 
     private fun registerViewListeners() {

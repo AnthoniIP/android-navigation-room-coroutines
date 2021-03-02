@@ -3,7 +3,9 @@ package com.ipsoft.android_navigation_room_coroutines.ui.registration
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.ipsoft.android_navigation_room_coroutines.R
+import com.ipsoft.android_navigation_room_coroutines.data.repository.UserRepository
 
 /**
  *
@@ -12,17 +14,13 @@ import com.ipsoft.android_navigation_room_coroutines.R
  *  Date:       26/02/2021
  */
 
-class RegistrationViewModel : ViewModel() {
+class RegistrationViewModel(
+    private val userRepository: UserRepository
+) : ViewModel() {
 
-    sealed class RegistrationState {
-        object CollectProfileData :  RegistrationState()
-        object CollectCredentials : RegistrationState()
-        object RegistrationCompleted : RegistrationState()
-        class InvalidProfileData(val fields: List<Pair<String, Int>>) : RegistrationState()
-        class InvalidCredentials(val fields: List<Pair<String, Int>>) : RegistrationState()
-    }
 
-    private val _registrationStateEvent = MutableLiveData<RegistrationState>(RegistrationState.CollectProfileData)
+    private val _registrationStateEvent =
+        MutableLiveData<RegistrationState>(RegistrationState.CollectProfileData)
     val registrationStateEvent: LiveData<RegistrationState>
         get() = _registrationStateEvent
 
@@ -81,7 +79,7 @@ class RegistrationViewModel : ViewModel() {
         return true
     }
 
-    fun userCancelledRegistration() : Boolean {
+    fun userCancelledRegistration(): Boolean {
         authToken = ""
         _registrationStateEvent.value = RegistrationState.CollectProfileData
         return true
@@ -90,7 +88,25 @@ class RegistrationViewModel : ViewModel() {
     companion object {
         val INPUT_NAME = "INPUT_NAME" to R.string.profile_data_input_layout_error_invalid_name
         val INPUT_BIO = "INPUT_BIO" to R.string.profile_data_input_layout_error_invalid_bio
-        val INPUT_USERNAME = "INPUT_USERNAME" to R.string.choose_credentials_input_layout_error_invalid_username
-        val INPUT_PASSWORD = "INPUT_PASSWORD" to R.string.choose_credentials_input_layout_error_invalid_password
+        val INPUT_USERNAME =
+            "INPUT_USERNAME" to R.string.choose_credentials_input_layout_error_invalid_username
+        val INPUT_PASSWORD =
+            "INPUT_PASSWORD" to R.string.choose_credentials_input_layout_error_invalid_password
+    }
+
+    class RegistrationViewModelFactory(private val userRepository: UserRepository) :
+        ViewModelProvider.Factory {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            return RegistrationViewModel(userRepository) as T
+        }
+
+    }
+
+    sealed class RegistrationState {
+        object CollectProfileData : RegistrationState()
+        object CollectCredentials : RegistrationState()
+        object RegistrationCompleted : RegistrationState()
+        class InvalidProfileData(val fields: List<Pair<String, Int>>) : RegistrationState()
+        class InvalidCredentials(val fields: List<Pair<String, Int>>) : RegistrationState()
     }
 }

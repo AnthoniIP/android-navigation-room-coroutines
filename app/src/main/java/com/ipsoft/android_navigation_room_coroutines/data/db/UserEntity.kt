@@ -2,6 +2,8 @@ package com.ipsoft.android_navigation_room_coroutines.data.db
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.ipsoft.android_navigation_room_coroutines.data.model.User
+import com.ipsoft.android_navigation_room_coroutines.ui.registration.RegistrationViewParams
 
 /**
  *
@@ -19,3 +21,24 @@ data class UserEntity(
     val userName: String,
     val password: String
 )
+
+fun RegistrationViewParams.toUserEntity(): UserEntity {
+    return with(this) {
+        UserEntity(
+            name = this.name,
+            bio = this.bio,
+            userName = this.username,
+            password = this.password
+        )
+    }
+}
+
+fun UserEntity.toUser(): User {
+    return with(this) {
+        User(
+            id = this.id.toString(),
+            name = this.name,
+            bio = this.bio
+        )
+    }
+}

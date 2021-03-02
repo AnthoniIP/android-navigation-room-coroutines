@@ -2,6 +2,7 @@ package com.ipsoft.android_navigation_room_coroutines.data.repository
 
 import com.ipsoft.android_navigation_room_coroutines.data.model.User
 import com.ipsoft.android_navigation_room_coroutines.ui.registration.RegistrationViewModel
+import com.ipsoft.android_navigation_room_coroutines.ui.registration.RegistrationViewParams
 
 /**
  *
