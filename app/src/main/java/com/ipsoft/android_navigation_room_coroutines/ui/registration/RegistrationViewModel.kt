@@ -1,11 +1,9 @@
 package com.ipsoft.android_navigation_room_coroutines.ui.registration
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import com.ipsoft.android_navigation_room_coroutines.R
 import com.ipsoft.android_navigation_room_coroutines.data.repository.UserRepository
+import kotlinx.coroutines.launch
 
 /**
  *
@@ -26,6 +24,8 @@ class RegistrationViewModel(
 
     var authToken = ""
         private set
+
+    private var registrationViewParams: RegistrationViewParams = RegistrationViewParams()
 
     fun collectProfileData(name: String, bio: String) {
         if (isValidProfileData(name, bio)) {
@@ -54,10 +54,15 @@ class RegistrationViewModel(
 
     fun createCredentials(username: String, password: String) {
         if (isValidCredentials(username, password)) {
-            // ... create account
-            // ... authenticate
-            this.authToken = "token"
-            _registrationStateEvent.value = RegistrationState.RegistrationCompleted
+            viewModelScope.launch {
+                registrationViewParams.username = username
+                registrationViewParams.password = password
+
+                userRepository.createUser(registrationViewParams)
+                this@RegistrationViewModel.authToken = "token"
+                _registrationStateEvent.value = RegistrationState.RegistrationCompleted
+            }
+
         }
     }
 

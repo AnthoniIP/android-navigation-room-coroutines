@@ -16,16 +16,16 @@ import com.ipsoft.android_navigation_room_coroutines.ui.registration.Registratio
 class UserDbDataSource(
     private val userDao: UserDao
 ) : UserRepository {
-    override fun createUser(registrationViewParams: RegistrationViewParams) {
+    override suspend fun createUser(registrationViewParams: RegistrationViewParams) {
         val userEntity = registrationViewParams.toUserEntity()
         userDao.save(userEntity)
     }
 
-    override fun getUser(id: Long): User {
+    override suspend fun getUser(id: Long): User {
         return userDao.getUser(id).toUser()
     }
 
-    override fun login(username: String, password: String): Long {
+    override suspend fun login(username: String, password: String): Long {
         return userDao.login(username,password)
     }
 }

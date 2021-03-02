@@ -16,11 +16,11 @@ import com.ipsoft.android_navigation_room_coroutines.data.db.UserEntity
 interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun save(user: UserEntity)
+    suspend fun save(user: UserEntity)
 
     @Query("SELECT * FROM user WHERE id =:id")
-    fun getUser(id: Long): UserEntity
+    suspend fun getUser(id: Long): UserEntity
 
     @Query("SELECT id FROM user WHERE userName = :userName and password = :password")
-    fun login(userName: String, password: String): Long
+    suspend fun login(userName: String, password: String): Long
 }

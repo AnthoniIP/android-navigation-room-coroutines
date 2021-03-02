@@ -13,7 +13,7 @@ import com.ipsoft.android_navigation_room_coroutines.ui.registration.Registratio
 
 interface UserRepository {
 
-    fun createUser(registrationViewParams: RegistrationViewParams)
-    fun getUser(id: Long) : User
-    fun login(username: String,password: String) : Long
+    suspend fun createUser(registrationViewParams: RegistrationViewParams)
+    suspend fun getUser(id: Long) : User
+    suspend fun login(username: String,password: String) : Long
 }
